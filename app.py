@@ -173,7 +173,8 @@ def get_ai_response(user_input: str, context: list) -> dict:
         chat = model.start_chat(history=history)
 
         response = chat.send_message(
-            f"{SYSTEM_PROMPT}\n\nUser query: {user_input}\n\nRespond ONLY with valid JSON.",
+            f"{SYSTEM_PROMPT}\n\nUser query: {user_input}",
+            generation_config={"response_mime_type": "application/json"},
             request_options={"timeout": 10}  # ✅ TIMEOUT ADDED
         )
 
@@ -191,6 +192,10 @@ def get_ai_response(user_input: str, context: list) -> dict:
 
         return parsed
 
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON Decode Error: {e}")
+        return fallback_response("Invalid AI response format")
+
     except Exception as e:
         logger.error(f"Gemini API error: {e}")
 
@@ -203,10 +208,6 @@ def get_ai_response(user_input: str, context: list) -> dict:
                 "items": [{"label": "Error", "value": "Quota exceeded"}],
                 "follow_ups": ["Try again", "Check eligibility", "Voting steps"]
             }
-
-        # ✅ JSON ERROR HANDLING (ADDED)
-        if "Expecting value" in str(e):
-            return fallback_response("Invalid AI response")
 
         return fallback_response(str(e)[:80])
 
