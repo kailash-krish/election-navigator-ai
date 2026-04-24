@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Election Navigator AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <div class="app-shell">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">🗳️</div>
+                <div>
+                    <div class="brand-name">Election</div>
+                    <div class="brand-sub">Navigator AI</div>
+                </div>
+            </div>
+
+            <nav class="quick-nav">
+                <p class="nav-label">Quick Topics</p>
+                <button class="nav-btn" data-query="Am I eligible to vote in India?">
+                    <span class="nav-icon">✅</span> Check Eligibility
+                </button>
+                <button class="nav-btn" data-query="How do I register to vote and get a Voter ID?">
+                    <span class="nav-icon">📋</span> Register to Vote
+                </button>
+                <button class="nav-btn" data-query="Walk me through the steps on voting day">
+                    <span class="nav-icon">🗳️</span> Voting Day Guide
+                </button>
+                <button class="nav-btn" data-query="What documents do I need to vote?">
+                    <span class="nav-icon">🪪</span> Required Documents
+                </button>
+                <button class="nav-btn" data-query="Give me an election timeline and important dates">
+                    <span class="nav-icon">📅</span> Election Timeline
+                </button>
+                <button class="nav-btn" data-query="I am a first-time voter. Guide me completely.">
+                    <span class="nav-icon">🌟</span> First-Time Voter
+                </button>
+                <button class="nav-btn" data-query="How does EVM and VVPAT work?">
+                    <span class="nav-icon">🖥️</span> EVM & VVPAT
+                </button>
+                <button class="nav-btn" data-query="What are my voting rights in India?">
+                    <span class="nav-icon">⚖️</span> Voting Rights
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="trust-badge">🏛️ Powered by ECI Guidelines</div>
+                <div class="trust-badge">🤖 Gemini AI</div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main">
+            <header class="topbar">
+                <button class="hamburger" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+                <div class="topbar-title">Election Navigator AI</div>
+                <div class="topbar-status">
+                    <span class="status-dot"></span> Live
+                </div>
+            </header>
+
+            <div class="chat-area" id="chatArea" role="log" aria-live="polite">
+                <!-- Welcome card injected by JS -->
+            </div>
+
+            <div class="input-zone">
+                <div class="input-wrapper">
+                    <textarea id="userInput" class="chat-input"
+                        placeholder="Ask anything about elections… e.g. 'How do I vote for the first time?'" rows="1"
+                        maxlength="500" aria-label="Your question"></textarea>
+                    <button id="sendBtn" class="send-btn" aria-label="Send message">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="input-hint">Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
