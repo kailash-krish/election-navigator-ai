@@ -69,8 +69,8 @@ async function handleSend() {
     await sendQuery(text);
 }
 
-async function sendQuery(text) {
-    appendUserMessage(text);
+async function sendQuery(text, displayText = null) {
+    appendUserMessage(displayText || text);
     conversationContext.push({ role: "user", content: text });
 
     const typingId = showTyping();
@@ -158,7 +158,10 @@ function renderStructuredResponse(data) {
 
     aiRow.appendChild(bubble);
     aiRow.querySelectorAll(".option-btn").forEach((btn) => {
-        btn.addEventListener("click", () => sendQuery(btn.dataset.action));
+        btn.addEventListener("click", () => {
+            const titleEl = btn.querySelector(".option-title");
+            sendQuery(btn.dataset.action, titleEl ? titleEl.textContent : btn.dataset.action);
+        });
     });
     aiRow.querySelectorAll(".followup-btn").forEach((btn) => {
         btn.addEventListener("click", () => sendQuery(btn.dataset.query));
