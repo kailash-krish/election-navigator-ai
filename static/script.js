@@ -96,23 +96,31 @@ function initSidebar() {
 }
 
 // ── Send / receive ─────────────────────────────────────────────────────────
-function sendQuery(text) {
+function sendQuery(text, displayText = null) {
   if (!text) return;
   switchTab("assistant");
-  msgInput.value = text;
-  sendMessage();
+  if (displayText) {
+    sendMessage(text, displayText);
+  } else {
+    msgInput.value = text;
+    sendMessage();
+  }
 }
 
-async function sendMessage() {
-  const text = msgInput.value.trim();
+async function sendMessage(overrideText = null, overrideDisplayText = null) {
+  const text = overrideText || msgInput.value.trim();
   if (!text) return;
+  const displayText = overrideDisplayText || text;
 
   hideWelcome();
-  appendUserMessage(text);
-  msgInput.value = "";
-  charCount.textContent = "0/500";
-  msgInput.style.height = "auto";
-  sendBtn.disabled = true;
+  appendUserMessage(displayText);
+  
+  if (!overrideText) {
+    msgInput.value = "";
+    charCount.textContent = "0/500";
+    msgInput.style.height = "auto";
+    sendBtn.disabled = true;
+  }
 
   state.context.push({ role: "user", content: text });
   const typing = showTyping();
@@ -299,7 +307,7 @@ function renderItems(data) {
       const p   = el("p");  p.textContent  = it.description || "";
       txt.append(h3, p);
       btn.append(ico, txt);
-      btn.addEventListener("click", () => sendQuery(it.action || it.option));
+      btn.addEventListener("click", () => sendQuery(it.action || it.option, it.option));
       grid.appendChild(btn);
     });
     return grid;
