@@ -397,6 +397,11 @@ body {
 .tl-chat-event { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
 .tl-chat-desc { font-size: .85rem; color: var(--text-2); }
 
+/* Input hint & Link button */
+.input-hint { padding: 8px 24px 16px; font-size: .8rem; color: var(--text-3); text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
+.link-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 99px; padding: 4px 12px; color: var(--text-2); cursor: pointer; font-size: .8rem; font-family: var(--font); transition: var(--transition); backdrop-filter: blur(4px); }
+.link-btn:hover { color: #fff; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+
 /* ── Booth Finder tab ────────────────────────────────────────── */
 .booth-layout {
     display: grid;
