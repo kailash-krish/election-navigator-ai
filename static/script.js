@@ -7,20 +7,20 @@
 
 // ── State ─────────────────────────────────────────────────────────────────
 const state = {
-  context:  [],
+  context: [],
   progress: { eligible: false, docs: false, register: false, booth: false, timeline: false },
   language: "en",
-  map:      null,
-  markers:  [],
+  map: null,
+  markers: [],
 };
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
-const $  = id => document.getElementById(id);
-const feed       = $("chat-feed");
-const welcome    = $("welcome-card");
-const msgInput   = $("msg-input");
-const sendBtn    = $("send-btn");
-const charCount  = $("char-count");
+const $ = id => document.getElementById(id);
+const feed = $("chat-feed");
+const welcome = $("welcome-card");
+const msgInput = $("msg-input");
+const sendBtn = $("send-btn");
+const charCount = $("char-count");
 const langSelect = $("lang-select");
 
 // ── Init ──────────────────────────────────────────────────────────────────
@@ -51,9 +51,9 @@ function switchTab(tabId) {
   });
 
   const panel = $(`tab-${tabId}`);
-  const btn   = document.querySelector(`[data-tab="${tabId}"]`);
+  const btn = document.querySelector(`[data-tab="${tabId}"]`);
   if (panel) { panel.classList.add("active"); panel.hidden = false; }
-  if (btn)   { btn.classList.add("active"); btn.setAttribute("aria-pressed", "true"); }
+  if (btn) { btn.classList.add("active"); btn.setAttribute("aria-pressed", "true"); }
 
   if (tabId === "timeline") markProgress("timeline");
 }
@@ -74,9 +74,12 @@ function initInput() {
   sendBtn.addEventListener("click", sendMessage);
   langSelect.addEventListener("change", () => { state.language = langSelect.value; });
 
-  // Welcome chips & sidebar quick btns
-  document.querySelectorAll(".chip, .quick-btn, [data-q]").forEach(el => {
-    el.addEventListener("click", () => sendQuery(el.dataset.q));
+  // ✅ FIXED: ONLY chips (removed [data-q] to prevent duplicate firing)
+  document.querySelectorAll(".chip").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sendQuery(el.dataset.q);
+    });
   });
 }
 
@@ -88,7 +91,8 @@ function autoResize(el) {
 // ── Sidebar ───────────────────────────────────────────────────────────────
 function initSidebar() {
   document.querySelectorAll(".quick-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation(); // ✅ FIXED: prevent duplicate bubbling
       switchTab("assistant");
       sendQuery(btn.dataset.q);
     });
@@ -114,7 +118,7 @@ async function sendMessage(overrideText = null, overrideDisplayText = null) {
 
   hideWelcome();
   appendUserMessage(displayText);
-  
+
   if (!overrideText) {
     msgInput.value = "";
     charCount.textContent = "0/500";
@@ -126,8 +130,8 @@ async function sendMessage(overrideText = null, overrideDisplayText = null) {
   const typing = showTyping();
 
   try {
-    const res  = await fetch("/chat", {
-      method:  "POST",
+    const res = await fetch("/chat", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text, context: state.context, language: state.language }),
     });
@@ -197,10 +201,10 @@ function appendAIResponse(data) {
 }
 
 function buildResponseCard(data) {
-  const card   = el("div", "response-card");
+  const card = el("div", "response-card");
   const header = el("div", "card-header");
-  const h2     = el("h2");  h2.textContent = data.title || "Response";
-  const p      = el("p");   p.textContent  = data.summary || "";
+  const h2 = el("h2"); h2.textContent = data.title || "Response";
+  const p = el("p"); p.textContent = data.summary || "";
   header.appendChild(h2);
   header.appendChild(p);
 
@@ -228,8 +232,8 @@ function renderItems(data) {
       const num = el("div", "step-num"); num.textContent = it.step;
       const ico = el("div", "step-icon"); ico.textContent = it.icon || "•";
       const txt = el("div", "step-text");
-      const h3  = el("h3"); h3.textContent = it.title;
-      const p   = el("p");  p.textContent  = it.description;
+      const h3 = el("h3"); h3.textContent = it.title;
+      const p = el("p"); p.textContent = it.description;
       txt.append(h3, p);
       row.append(num, ico, txt);
       wrap.appendChild(row);
@@ -243,8 +247,8 @@ function renderItems(data) {
       const c = el("div", "info-card");
       if (it.tag) { const t = el("div", "tag"); t.textContent = it.tag; c.appendChild(t); }
       const ico = el("div", "info-card-icon"); ico.textContent = it.icon || "ℹ️";
-      const h3  = el("h3"); h3.textContent = it.title;
-      const p   = el("p");  p.textContent  = it.description;
+      const h3 = el("h3"); h3.textContent = it.title;
+      const p = el("p"); p.textContent = it.description;
       c.append(ico, h3, p);
       grid.appendChild(c);
     });
@@ -259,10 +263,10 @@ function renderItems(data) {
       row.setAttribute("aria-checked", "false");
       row.setAttribute("tabindex", "0");
 
-      const box  = el("div", "check-box");
-      const txt  = el("div", "check-text");
-      const h3   = el("h3"); h3.textContent = it.task;
-      const p    = el("p");  p.textContent  = it.detail || "";
+      const box = el("div", "check-box");
+      const txt = el("div", "check-text");
+      const h3 = el("h3"); h3.textContent = it.task;
+      const p = el("p"); p.textContent = it.detail || "";
       txt.append(h3, p);
 
       if (it.required) {
@@ -303,8 +307,8 @@ function renderItems(data) {
       const btn = el("button", "option-btn");
       const ico = el("div", "opt-icon"); ico.textContent = "👉";
       const txt = el("div");
-      const h3  = el("h3"); h3.textContent = it.option;
-      const p   = el("p");  p.textContent  = it.description || "";
+      const h3 = el("h3"); h3.textContent = it.option;
+      const p = el("p"); p.textContent = it.description || "";
       txt.append(h3, p);
       btn.append(ico, txt);
       btn.addEventListener("click", () => sendQuery(it.action || it.option, it.option));
@@ -316,14 +320,14 @@ function renderItems(data) {
   if (type === "timeline") {
     const tl = el("div", "tl-chat");
     items.forEach(it => {
-      const row  = el("div", `tl-chat-item ${it.status || "upcoming"}`);
-      const dot  = el("div", "tl-chat-dot"); dot.setAttribute("aria-hidden", "true");
+      const row = el("div", `tl-chat-item ${it.status || "upcoming"}`);
+      const dot = el("div", "tl-chat-dot"); dot.setAttribute("aria-hidden", "true");
       const body = el("div");
       const badge = el("span", `tl-status-badge ${it.status || "upcoming"}`);
       badge.textContent = it.status || "upcoming";
       const date = el("p", "tl-chat-date"); date.textContent = it.date;
-      const ev   = el("p", "tl-chat-event"); ev.textContent = it.event;
-      const desc = el("p", "tl-chat-desc");  desc.textContent = it.description;
+      const ev = el("p", "tl-chat-event"); ev.textContent = it.event;
+      const desc = el("p", "tl-chat-desc"); desc.textContent = it.description;
       body.append(badge, date, ev, desc);
       row.append(dot, body);
       tl.appendChild(row);
@@ -339,8 +343,8 @@ function renderItems(data) {
 // ── Typing indicator ──────────────────────────────────────────────────────
 function showTyping() {
   const wrap = el("div", "msg-wrap ai");
-  wrap.id    = "typing-wrap";
-  const t    = el("div", "typing");
+  wrap.id = "typing-wrap";
+  const t = el("div", "typing");
   t.setAttribute("aria-label", "AI is thinking");
   t.innerHTML = "<span></span><span></span><span></span>";
   wrap.appendChild(t);
@@ -353,11 +357,11 @@ function removeTyping(wrap) { if (wrap?.parentNode) wrap.remove(); }
 // ── Progress tracker ──────────────────────────────────────────────────────
 function detectProgress(text, data) {
   const t = text.toLowerCase();
-  if (/eligib/.test(t))                     markProgress("eligible");
-  if (/document|id proof|papers/.test(t))   markProgress("docs");
-  if (/register|form 6|voter id/.test(t))   markProgress("register");
-  if (/booth|find.*booth|polling/.test(t))  markProgress("booth");
-  if (/timeline|phases|schedule/.test(t))   markProgress("timeline");
+  if (/eligib/.test(t)) markProgress("eligible");
+  if (/document|id proof|papers/.test(t)) markProgress("docs");
+  if (/register|form 6|voter id/.test(t)) markProgress("register");
+  if (/booth|find.*booth|polling/.test(t)) markProgress("booth");
+  if (/timeline|phases|schedule/.test(t)) markProgress("timeline");
 }
 
 function markProgress(key) {
@@ -367,10 +371,10 @@ function markProgress(key) {
   const item = document.querySelector(`.p-item[data-key="${key}"]`);
   if (item) item.classList.add("done");
 
-  const done  = Object.values(state.progress).filter(Boolean).length;
+  const done = Object.values(state.progress).filter(Boolean).length;
   const total = Object.keys(state.progress).length;
-  const pct   = Math.round((done / total) * 100);
-  const bar   = $("progress-bar");
+  const pct = Math.round((done / total) * 100);
+  const bar = $("progress-bar");
   if (bar) {
     bar.style.width = pct + "%";
     bar.setAttribute("aria-valuenow", pct);
@@ -399,7 +403,7 @@ function initBoothFinder() {
     showToast("📡 Getting your location…");
     navigator.geolocation.getCurrentPosition(
       pos => fetchBooths({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      ()  => showToast("Location access denied. Try pincode instead.")
+      () => showToast("Location access denied. Try pincode instead.")
     );
   });
 }
@@ -410,10 +414,10 @@ async function fetchBooths(params) {
   markProgress("booth");
 
   try {
-    const res  = await fetch("/polling-booth", {
-      method:  "POST",
+    const res = await fetch("/polling-booth", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(params),
+      body: JSON.stringify(params),
     });
     const data = await res.json();
 
@@ -432,7 +436,7 @@ async function fetchBooths(params) {
       card.setAttribute("aria-label", place.name);
 
       const h3 = el("h3"); h3.textContent = place.name;
-      const p  = el("p");  p.textContent  = place.address || "Address not available";
+      const p = el("p"); p.textContent = place.address || "Address not available";
       const meta = el("div", "booth-meta");
 
       if (place.rating) {
@@ -482,7 +486,8 @@ function renderMap(lat, lng, places) {
   }
 
   // Center marker
-  new google.maps.Marker({ position: center, map: state.map, title: "Your location",
+  new google.maps.Marker({
+    position: center, map: state.map, title: "Your location",
     icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: "#1a56db", fillOpacity: 1, strokeColor: "#fff", strokeWeight: 2 }
   });
 
@@ -525,7 +530,7 @@ function showToast(msg) {
 // ── Utilities ─────────────────────────────────────────────────────────────
 function clearChat() {
   feed.innerHTML = "";
-  state.context  = [];
+  state.context = [];
   if (welcome) welcome.style.display = "";
   showToast("Chat cleared");
 }
