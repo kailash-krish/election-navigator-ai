@@ -7,3 +7,6 @@ google-cloud-logging==3.11.0
 gunicorn==23.0.0
 pytest==8.3.5
 pytest-cov==6.1.0
+redis
+pytest-playwright
+playwright

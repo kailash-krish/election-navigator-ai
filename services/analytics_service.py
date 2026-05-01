@@ -8,6 +8,8 @@ No PII stored — only query category, response type, language, timestamp.
 import logging
 import datetime
 from typing import Optional
+import threading
+import queue
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +67,10 @@ class AnalyticsService:
         self._cl_client  = None
         self._ready     = False
         self._local_log: list = []  # fallback in-memory log
+        self._queue = queue.Queue()
+
+        self._worker_thread = threading.Thread(target=self._worker_loop, daemon=True)
+        self._worker_thread.start()
 
         if not project_id:
             logger.info("GOOGLE_CLOUD_PROJECT not set; analytics in local mode.")
@@ -108,7 +114,8 @@ class AnalyticsService:
             "language":      language,
         }
         self._local_log.append(row)
-        self._insert_rows(self.TABLE_INTERACTIONS, [row])
+        if self._ready and self._bq_client:
+            self._queue.put((self.TABLE_INTERACTIONS, row))
 
     def log_booth_search(self, pincode: Optional[str], has_location: bool) -> None:
         """Log a booth-finder search (no exact location stored)."""
@@ -119,7 +126,8 @@ class AnalyticsService:
             "region":       pincode[:3] + "XXX" if pincode else "geo",  # partial only
         }
         self._local_log.append({"_table": self.TABLE_BOOTH_SEARCHES, **row})
-        self._insert_rows(self.TABLE_BOOTH_SEARCHES, [row])
+        if self._ready and self._bq_client:
+            self._queue.put((self.TABLE_BOOTH_SEARCHES, row))
 
     def get_summary(self) -> dict:
         """Return anonymized aggregated stats."""
@@ -137,6 +145,15 @@ class AnalyticsService:
         }
 
     # ── Private ───────────────────────────────────────────────────────────────
+
+    def _worker_loop(self):
+        while True:
+            try:
+                table_name, row = self._queue.get()
+                self._insert_rows(table_name, [row])
+                self._queue.task_done()
+            except Exception as e:
+                logger.error("Analytics worker error: %s", e)
 
     def _insert_rows(self, table_name: str, rows: list) -> None:
         if not self._bq_client:

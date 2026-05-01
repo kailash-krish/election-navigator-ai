@@ -362,6 +362,9 @@
 {% endif %}
 
 <!-- ── GOOGLE MAPS SDK ───────────────────────────────────────────────── -->
+<!-- SECURITY NOTE: The Maps JS API requires the key to be exposed in the frontend.
+     To secure it, you MUST configure HTTP Referrer restrictions in Google Cloud Console
+     so it can only be used from your allowed domains. -->
 {% if maps_api_key %}
 <script>
   window.MAPS_API_KEY = "{{ maps_api_key | e }}";

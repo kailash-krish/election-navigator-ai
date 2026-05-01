@@ -8,6 +8,8 @@
 
 "use strict";
 
+const ElectionNavigator = (function() {
+
 /* ── Google Maps dark style ──────────────────────────────────────────── */
 const DARK_MAP_STYLE = [
   { elementType: "geometry",        stylers: [{ color: "#0f1623" }] },
@@ -694,4 +696,15 @@ function sanitize(str) {
     .replace(/>/g,  "&gt;")
     .replace(/"/g,  "&quot;")
     .replace(/'/g,  "&#x27;");
+}
+
+  return {
+    _categorizeQuery,
+    getState: () => state,
+    initMap: window.initMap
+  };
+})();
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = ElectionNavigator;
 }

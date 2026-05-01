@@ -15,7 +15,7 @@ from services.maps_service import MapsService
 from services.translate_service import TranslateService
 from services.flow_service import FlowService
 from services.analytics_service import AnalyticsService
-from services.validator import validate_chat_request, validate_translate_request
+from services.validator import validate_chat_request, validate_translate_request, init_safety_model
 
 # ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -57,17 +57,38 @@ def set_security_headers(response):
 
 
 # ── Rate Limiting (lightweight, no external dep) ──────────────────────────────
+import redis
 from collections import defaultdict
 import time
 
 _rate_store: dict = defaultdict(list)
-_RATE_WINDOW = 60   # seconds
-_RATE_LIMIT   = 30  # requests per window per IP
+_RATE_WINDOW = int(os.environ.get("RATE_WINDOW", 60))
+_RATE_LIMIT   = int(os.environ.get("RATE_LIMIT", 30))
+
+_redis_client = None
+if os.environ.get("REDIS_URL"):
+    try:
+        _redis_client = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
+    except Exception as e:
+        logger.warning("Redis connection failed: %s", e)
 
 def _is_rate_limited(ip: str) -> bool:
+    if _redis_client:
+        try:
+            key = f"rate_limit:{ip}"
+            calls = _redis_client.incr(key)
+            if calls == 1:
+                _redis_client.expire(key, _RATE_WINDOW)
+            if calls > _RATE_LIMIT:
+                logger.warning("Rate limit hit for IP %s", ip)
+                return True
+            return False
+        except Exception as e:
+            logger.error("Redis rate limit failed, falling back to memory: %s", e)
+    
+    # Fallback in-memory
     now = time.time()
     calls = _rate_store[ip]
-    # prune old
     _rate_store[ip] = [t for t in calls if now - t < _RATE_WINDOW]
     if len(_rate_store[ip]) >= _RATE_LIMIT:
         logger.warning("Rate limit hit for IP %s", ip)
@@ -80,7 +101,8 @@ def _client_ip() -> str:
 
 
 # ── Service init ──────────────────────────────────────────────────────────────
-gemini_svc   = GeminiService(api_key=os.environ.get("GEMINI_API_KEY"))
+init_safety_model(os.environ.get("GEMINI_API_KEY"))
+gemini_svc   = GeminiService(api_key=os.environ.get("GEMINI_API_KEY"), redis_client=_redis_client)
 maps_svc     = MapsService(api_key=os.environ.get("GOOGLE_MAPS_API_KEY"))
 trans_svc    = TranslateService(api_key=os.environ.get("GOOGLE_TRANSLATE_API_KEY"))
 flow_svc     = FlowService()

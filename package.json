@@ -1,0 +1,28 @@
+{
+  "name": "election-navigator-ai",
+  "version": "1.0.0",
+  "description": "> Top-ranked AI assistant for India's election process — powered by Google Gemini, Maps, Translate, BigQuery, Firebase, and Cloud Run.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kailash-krish/election-navigator-ai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kailash-krish/election-navigator-ai/issues"
+  },
+  "homepage": "https://github.com/kailash-krish/election-navigator-ai#readme",
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
+  }
+}

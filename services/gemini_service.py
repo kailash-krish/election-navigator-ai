@@ -7,6 +7,7 @@ import json
 import logging
 import time
 import hashlib
+import os
 
 import google.generativeai as genai
 
@@ -40,13 +41,15 @@ RULES:
 - For greetings or unclear input: use type "question" to guide the user.
 - Never mention you are an AI or mention Gemini."""
 
-CACHE_TTL = 600  # 10 minutes
+- Never mention you are an AI or mention Gemini."""
 
 
 class GeminiService:
-    def __init__(self, api_key: str | None):
+    def __init__(self, api_key: str | None, redis_client=None):
         self._ready = False
         self._cache: dict = {}
+        self._redis = redis_client
+        self._cache_ttl = int(os.environ.get("CACHE_TTL", 600))
 
         if not api_key:
             logger.warning("GEMINI_API_KEY not configured.")
@@ -65,13 +68,22 @@ class GeminiService:
         return len(self._cache)
 
     def get_response(self, user_input: str, context: list) -> dict:
-        cache_key = self._make_cache_key(user_input, context)
+        cache_key = f"gemini_cache:{self._make_cache_key(user_input, context)}"
 
-        if cache_key in self._cache:
-            entry, ts = self._cache[cache_key]
-            if time.time() - ts < CACHE_TTL:
-                logger.info("Cache hit for query.")
-                return entry
+        if self._redis:
+            try:
+                val = self._redis.get(cache_key)
+                if val:
+                    logger.info("Cache hit from Redis.")
+                    return json.loads(val)
+            except Exception as e:
+                logger.error("Redis cache error: %s", e)
+        else:
+            if cache_key in self._cache:
+                entry, ts = self._cache[cache_key]
+                if time.time() - ts < self._cache_ttl:
+                    logger.info("Cache hit from in-memory.")
+                    return entry
 
         if not self._model:
             return self._no_api_key_response()
@@ -92,7 +104,15 @@ class GeminiService:
                     request_options={"timeout": 15},
                 )
                 parsed = self._parse(resp.text)
-                self._cache[cache_key] = (parsed, time.time())
+                
+                if self._redis:
+                    try:
+                        self._redis.setex(cache_key, self._cache_ttl, json.dumps(parsed))
+                    except Exception as e:
+                        logger.error("Redis set error: %s", e)
+                else:
+                    self._cache[cache_key] = (parsed, time.time())
+                    
                 return parsed
 
             except Exception as e:
@@ -107,8 +127,11 @@ class GeminiService:
     # ── Private helpers ──────────────────────────────────────────────────────
 
     def _make_cache_key(self, user_input: str, context: list) -> str:
-        raw = user_input.strip().lower() + json.dumps(context[-4:], sort_keys=True)
-        return hashlib.md5(raw.encode()).hexdigest()
+        parts = [user_input.strip().lower()]
+        for msg in context[-4:]:
+            parts.append(f"{msg.get('role', '')}:{msg.get('content', '')}")
+        raw = "|".join(parts)
+        return hashlib.sha256(raw.encode('utf-8')).hexdigest()
 
     def _build_history(self, context: list) -> list:
         history = []
