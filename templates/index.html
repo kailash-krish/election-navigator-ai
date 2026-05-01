@@ -8,33 +8,36 @@
   <title>Election Navigator AI 🗳️</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css?v=7" />
+  <link rel="stylesheet" href="/static/style.css?v=8" />
 </head>
 <body>
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<!-- ── SKIP NAV (Accessibility) ────────────────────────────────────── -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- ── HEADER ───────────────────────────────────────────────────────── -->
 <header class="site-header" role="banner">
   <div class="header-inner">
-    <div class="brand">
+    <div class="brand" role="img" aria-label="Election Navigator AI logo">
       <span class="brand-icon" aria-hidden="true">🗳️</span>
       <span class="brand-name">Election Navigator <span class="brand-ai">AI</span></span>
     </div>
-    <nav class="header-nav" aria-label="Site navigation">
-      <button class="nav-btn active" data-tab="assistant" aria-pressed="true">
+    <nav class="header-nav" aria-label="Site navigation" role="navigation">
+      <button class="nav-btn active" data-tab="assistant" aria-pressed="true" aria-controls="tab-assistant">
         <span aria-hidden="true">🤖</span> Assistant
       </button>
-      <button class="nav-btn" data-tab="booth" aria-pressed="false">
-        <span aria-hidden="true">📍</span> Booth Finder
+      <button class="nav-btn" data-tab="booth" aria-pressed="false" aria-controls="tab-booth">
+        <span aria-hidden="true">🏛️</span> Voter Offices
       </button>
-      <button class="nav-btn" data-tab="timeline" aria-pressed="false">
+      <button class="nav-btn" data-tab="timeline" aria-pressed="false" aria-controls="tab-timeline">
         <span aria-hidden="true">🗓️</span> Timeline
       </button>
     </nav>
     <div class="header-tools">
       <label for="lang-select" class="sr-only">Select Language</label>
-      <select id="lang-select" class="lang-select" aria-label="Select language">
+      <select id="lang-select" class="lang-select" aria-label="Select language for responses">
         <option value="en">🇮🇳 English</option>
         <option value="hi">हिन्दी</option>
         <option value="ta">தமிழ்</option>
@@ -44,198 +47,243 @@
         <option value="bn">বাংলা</option>
         <option value="mr">मराठी</option>
         <option value="gu">ગુજરાતી</option>
+        <option value="pa">ਪੰਜਾਬੀ</option>
+        <option value="or">ଓଡ଼ିଆ</option>
+        <option value="ur">اردو</option>
       </select>
     </div>
   </div>
 </header>
 
 <!-- ── MAIN ─────────────────────────────────────────────────────────── -->
-<main id="main-content" class="main">
+<main id="main-content" class="main" role="main">
 
   <!-- TAB: ASSISTANT -->
-  <section id="tab-assistant" class="tab-panel active" role="tabpanel" aria-label="AI Assistant">
+  <section id="tab-assistant" class="tab-panel active" role="tabpanel" aria-labelledby="nav-assistant" aria-label="AI Assistant">
     <div class="assistant-layout">
 
-      <!-- Sidebar quick-starts -->
-      <aside class="sidebar" aria-label="Quick topics">
-        <h2 class="sidebar-title">Quick Topics</h2>
-        <div class="quick-btns" role="list">
-          <button class="quick-btn" data-q="I am a first-time voter, guide me" role="listitem">🌟 First-Time Voter</button>
-          <button class="quick-btn" data-q="Check voter eligibility"           role="listitem">✅ Eligibility Check</button>
-          <button class="quick-btn" data-q="How to register and get Voter ID"  role="listitem">🪪 Register to Vote</button>
-          <button class="quick-btn" data-q="Show election timeline for India"  role="listitem">🗓️ Election Timeline</button>
-          <button class="quick-btn" data-q="How does EVM work"                 role="listitem">🖥️ How EVM Works</button>
-          <button class="quick-btn" data-q="What is VVPAT"                     role="listitem">🧾 What is VVPAT?</button>
-          <button class="quick-btn" data-q="Documents needed for voter id"     role="listitem">📄 Required Documents</button>
-          <button class="quick-btn" data-q="Explain voting day steps"          role="listitem">🗳️ Voting Day Steps</button>
-          <button class="quick-btn" data-q="What is Model Code of Conduct"     role="listitem">📋 Model Code</button>
-          <button class="quick-btn" data-q="Explain Lok Sabha election process" role="listitem">🏛️ Lok Sabha Process</button>
+      <!-- Sidebar -->
+      <aside class="sidebar glass-panel" aria-label="Quick topics and progress tracker">
+        <h2 class="sidebar-title" id="quick-topics-heading">Quick Topics</h2>
+        <nav class="quick-btns" role="list" aria-labelledby="quick-topics-heading">
+          <button class="quick-btn" data-q="I am a first-time voter, guide me" role="listitem" aria-label="First-Time Voter guide">🌟 First-Time Voter</button>
+          <button class="quick-btn" data-q="Check voter eligibility" role="listitem" aria-label="Check eligibility">✅ Eligibility Check</button>
+          <button class="quick-btn" data-q="How to register and get Voter ID" role="listitem" aria-label="Register to vote">🪪 Register to Vote</button>
+          <button class="quick-btn" data-q="Show election timeline for India" role="listitem" aria-label="Election timeline">🗓️ Election Timeline</button>
+          <button class="quick-btn" data-q="How does EVM work" role="listitem" aria-label="How EVM works">🖥️ How EVM Works</button>
+          <button class="quick-btn" data-q="What is VVPAT" role="listitem" aria-label="What is VVPAT">🧾 What is VVPAT?</button>
+          <button class="quick-btn" data-q="Documents needed for voter id" role="listitem" aria-label="Required documents">📄 Required Documents</button>
+          <button class="quick-btn" data-q="Explain voting day steps" role="listitem" aria-label="Voting day steps">🗳️ Voting Day Steps</button>
+          <button class="quick-btn" data-q="What is Model Code of Conduct" role="listitem" aria-label="Model Code of Conduct">📋 Model Code</button>
+          <button class="quick-btn" data-q="Explain Lok Sabha election process" role="listitem" aria-label="Lok Sabha process">🏛️ Lok Sabha Process</button>
+        </nav>
+
+        <div class="checklist-tracker" aria-live="polite" aria-label="Your voter readiness progress">
+          <h3 class="tracker-title">🎯 Your Progress</h3>
+          <div id="progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Voter readiness progress">
+            <div id="progress-bar"></div>
+          </div>
+          <ul id="checklist-items" class="progress-list" aria-label="Voter readiness checklist">
+            <li data-key="eligible"  class="p-item"><span class="p-icon" aria-hidden="true">⬜</span> Confirmed eligibility</li>
+            <li data-key="docs"      class="p-item"><span class="p-icon" aria-hidden="true">⬜</span> Checked documents</li>
+            <li data-key="register"  class="p-item"><span class="p-icon" aria-hidden="true">⬜</span> Registered to vote</li>
+            <li data-key="booth"     class="p-item"><span class="p-icon" aria-hidden="true">⬜</span> Found polling booth</li>
+            <li data-key="timeline"  class="p-item"><span class="p-icon" aria-hidden="true">⬜</span> Viewed timeline</li>
+          </ul>
         </div>
 
-        <div class="checklist-tracker" aria-live="polite">
-          <h3 class="tracker-title">🎯 Your Progress</h3>
-          <div id="progress-bar-wrap"><div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>
-          <ul id="checklist-items" class="progress-list" aria-label="Voter readiness checklist">
-            <li data-key="eligible"  class="p-item"><span class="p-icon">⬜</span> Confirmed eligibility</li>
-            <li data-key="docs"      class="p-item"><span class="p-icon">⬜</span> Checked documents</li>
-            <li data-key="register"  class="p-item"><span class="p-icon">⬜</span> Registered to vote</li>
-            <li data-key="booth"     class="p-item"><span class="p-icon">⬜</span> Found polling booth</li>
-            <li data-key="timeline"  class="p-item"><span class="p-icon">⬜</span> Viewed timeline</li>
-          </ul>
+        <!-- Live Visitors (Firebase Realtime) -->
+        <div class="live-stats" aria-live="polite" aria-label="Live usage statistics">
+          <h3 class="tracker-title">🔴 Live</h3>
+          <div class="live-row">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="live-count" aria-label="Active users right now">-- active users</span>
+          </div>
+          <div id="live-queries" class="live-queries" aria-label="Recent activity feed"></div>
         </div>
       </aside>
 
       <!-- Chat panel -->
-      <div class="chat-panel">
+      <div class="chat-panel glass-panel" role="region" aria-label="Chat interface">
         <!-- Welcome card -->
-        <div id="welcome-card" class="welcome-card" aria-label="Welcome message">
+        <div id="welcome-card" class="welcome-card" role="region" aria-label="Welcome">
           <div class="welcome-icon" aria-hidden="true">🗳️</div>
           <h1 class="welcome-title">Welcome to Election Navigator AI</h1>
           <p class="welcome-sub">Your intelligent, step-by-step guide to India's election process — powered by Google Gemini.</p>
           <div class="welcome-chips" role="list" aria-label="Suggested questions">
-            <button class="chip" data-q="I am a first-time voter, guide me" role="listitem">🌟 First-time voter</button>
-            <button class="chip" data-q="How do I register to vote?" role="listitem">📝 Register</button>
-            <button class="chip" data-q="What happens on election day?" role="listitem">🗓️ Election day</button>
-            <button class="chip" data-q="Find my polling booth" role="listitem">📍 Find booth</button>
+            <button class="chip" data-q="I am a first-time voter, guide me" role="listitem" aria-label="First-time voter guide">🌟 First-time voter</button>
+            <button class="chip" data-q="How do I register to vote?" role="listitem" aria-label="Register to vote">📝 Register</button>
+            <button class="chip" data-q="What happens on election day?" role="listitem" aria-label="Election day information">🗓️ Election day</button>
+            <button class="chip" data-q="Find voter registration offices near me" role="listitem" aria-label="Find voter registration offices">🏛️ Find office</button>
           </div>
         </div>
 
         <!-- Message feed -->
-        <div id="chat-feed" class="chat-feed" aria-live="polite" aria-label="Conversation"></div>
+        <div id="chat-feed" class="chat-feed" aria-live="polite" aria-label="Conversation" aria-relevant="additions" role="log"></div>
 
         <!-- Input bar -->
-        <div class="input-bar" role="search">
-          <label for="msg-input" class="sr-only">Type your election question</label>
+        <div class="input-bar" role="search" aria-label="Send a message">
+          <label for="msg-input" class="sr-only">Type your election question (max 500 characters)</label>
           <textarea
             id="msg-input"
             class="msg-input"
             rows="1"
             placeholder="Ask anything about elections…"
-            aria-label="Your question"
+            aria-label="Your election question"
+            aria-describedby="char-count"
             maxlength="500"
             autocomplete="off"
+            spellcheck="true"
           ></textarea>
-          <div class="char-count" id="char-count" aria-live="polite">0/500</div>
-          <button id="send-btn" class="send-btn" aria-label="Send message" disabled>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <div class="char-count" id="char-count" aria-live="polite" aria-atomic="true">0/500</div>
+          <button id="send-btn" class="send-btn" aria-label="Send message" disabled aria-disabled="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
           </button>
         </div>
-        <p class="input-hint">Powered by Google Gemini · <button class="link-btn" id="clear-btn" aria-label="Clear conversation">Clear chat</button></p>
+        <p class="input-hint">
+          Powered by Google Gemini ·
+          <button class="link-btn" id="clear-btn" aria-label="Clear conversation history" type="button">Clear chat</button>
+        </p>
       </div>
     </div>
   </section>
 
   <!-- TAB: BOOTH FINDER -->
-  <section id="tab-booth" class="tab-panel" role="tabpanel" aria-label="Polling Booth Finder" hidden>
+  <section id="tab-booth" class="tab-panel" role="tabpanel" aria-labelledby="nav-booth" aria-label="Voter Registration Office Finder" hidden>
     <div class="booth-layout">
-      <div class="booth-search-panel">
-        <h2 class="panel-title">📍 Polling Booth Finder</h2>
-        <p class="panel-sub">Find election offices and polling centers near you using Google Maps.</p>
+      <div class="booth-search-panel glass-panel">
+        <h2 class="panel-title">🏛️ Voter Registration Offices Near You</h2>
+        <p class="panel-sub">Find voter registration centres and government offices near you using Google Maps.</p>
 
-        <div class="booth-search-form" role="search" aria-label="Find polling booth">
+        <div class="eci-notice" role="note" aria-label="Important notice about polling booth lookup">
+          <span class="eci-notice-icon" aria-hidden="true">ℹ️</span>
+          <div>
+            <strong>Looking for your personal polling booth?</strong><br>
+            Your assigned booth on election day is linked to your EPIC number — not your location.
+            <a href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer"
+               class="eci-link" aria-label="Find your booth on voters.eci.gov.in (opens in new tab)">
+              Find it on voters.eci.gov.in ↗
+            </a>
+            &nbsp;or call <strong>1950</strong>.
+          </div>
+        </div>
+
+        <div class="booth-search-form" role="search" aria-label="Search for voter registration offices">
           <div class="form-group">
             <label for="pincode-input" class="form-label">Enter your Pincode</label>
             <div class="input-row">
-              <input type="text" id="pincode-input" class="form-input" placeholder="e.g. 600001"
-                     maxlength="6" pattern="[0-9]{6}" aria-required="true" aria-describedby="pincode-hint" />
-              <button id="pincode-btn" class="primary-btn">Search</button>
+              <input
+                type="text" id="pincode-input" class="form-input"
+                placeholder="e.g. 600001"
+                maxlength="6" pattern="[0-9]{6}"
+                inputmode="numeric"
+                aria-required="true"
+                aria-describedby="pincode-hint pincode-error"
+                aria-label="6-digit Indian pincode"
+                autocomplete="postal-code"
+              />
+              <button id="pincode-btn" class="primary-btn" type="button" aria-label="Search by pincode">Search</button>
             </div>
             <p id="pincode-hint" class="hint-text">Enter 6-digit Indian pincode</p>
+            <p id="pincode-error" class="error-text" aria-live="assertive" hidden></p>
           </div>
 
           <div class="divider-or" aria-hidden="true"><span>OR</span></div>
 
-          <button id="location-btn" class="secondary-btn">
+          <button id="location-btn" class="secondary-btn" type="button" aria-label="Use my current GPS location">
             <span aria-hidden="true">📡</span> Use My Location
           </button>
         </div>
 
-        <div id="booth-results" class="booth-results" aria-live="polite" aria-label="Search results"></div>
+        <div id="booth-results" class="booth-results" aria-live="polite" aria-label="Nearby voter registration offices" role="region"></div>
       </div>
 
-      <div class="map-panel">
-        <div id="map" class="map-container" aria-label="Google Map showing nearby election offices" role="img"></div>
-        <div id="map-placeholder" class="map-placeholder" aria-hidden="true">
-          <span class="map-ph-icon">🗺️</span>
-          <p>Search for your pincode or use location to see the map</p>
+      <div class="map-panel" role="region" aria-label="Map of nearby voter registration offices">
+        <div id="map" class="map-container" aria-label="Google Map showing nearby voter registration offices"></div>
+        <div id="map-placeholder" class="map-placeholder">
+          <span class="map-ph-icon" aria-hidden="true">🗺️</span>
+          <p>Search by pincode or use GPS to load the map</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- TAB: TIMELINE -->
-  <section id="tab-timeline" class="tab-panel" role="tabpanel" aria-label="Election Timeline" hidden>
-    <div class="timeline-page">
+  <section id="tab-timeline" class="tab-panel" role="tabpanel" aria-labelledby="nav-timeline" aria-label="Election Timeline" hidden>
+    <div class="timeline-page glass-panel">
       <h2 class="panel-title">🗓️ Indian General Election Timeline</h2>
       <p class="panel-sub">Understand the complete journey of a Lok Sabha election from announcement to results.</p>
-      <div class="timeline-container" role="list" aria-label="Election phases">
-        <div class="tl-item past" role="listitem">
+      <ol class="timeline-container" role="list" aria-label="Election phases in chronological order">
+        <li class="tl-item past" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge past">Completed</span>
+            <span class="tl-badge past" aria-label="Status: Completed">Completed</span>
             <h3 class="tl-event">Electoral Roll Revision</h3>
             <p class="tl-desc">Voter list is updated; citizens can register, correct, or delete their entries.</p>
             <p class="tl-when">~6 months before election</p>
           </div>
-        </div>
-        <div class="tl-item past" role="listitem">
+        </li>
+        <li class="tl-item past" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge past">Completed</span>
+            <span class="tl-badge past" aria-label="Status: Completed">Completed</span>
             <h3 class="tl-event">Election Announcement</h3>
             <p class="tl-desc">ECI announces date; Model Code of Conduct (MCC) comes into immediate effect.</p>
             <p class="tl-when">~2 months before voting</p>
           </div>
-        </div>
-        <div class="tl-item past" role="listitem">
+        </li>
+        <li class="tl-item past" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge past">Completed</span>
+            <span class="tl-badge past" aria-label="Status: Completed">Completed</span>
             <h3 class="tl-event">Nomination Filing</h3>
             <p class="tl-desc">Candidates file nomination papers with the Returning Officer of their constituency.</p>
             <p class="tl-when">~5 weeks before voting</p>
           </div>
-        </div>
-        <div class="tl-item current" role="listitem">
+        </li>
+        <li class="tl-item current" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge current">Active Now</span>
+            <span class="tl-badge current" aria-label="Status: Active Now">Active Now</span>
             <h3 class="tl-event">Campaign Period</h3>
             <p class="tl-desc">Political parties hold rallies, ads air; ECI enforces MCC. Ends 48 hrs before voting.</p>
             <p class="tl-when">3–4 weeks before voting</p>
           </div>
-        </div>
-        <div class="tl-item upcoming" role="listitem">
+        </li>
+        <li class="tl-item upcoming" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge upcoming">Upcoming</span>
+            <span class="tl-badge upcoming" aria-label="Status: Upcoming">Upcoming</span>
             <h3 class="tl-event">Voting Day</h3>
             <p class="tl-desc">Polls open 7 AM–6 PM. Citizens vote using EVMs; VVPAT provides paper verification.</p>
             <p class="tl-when">Election day</p>
           </div>
-        </div>
-        <div class="tl-item upcoming" role="listitem">
+        </li>
+        <li class="tl-item upcoming" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge upcoming">Upcoming</span>
-            <h3 class="tl-event">Vote Counting & Results</h3>
+            <span class="tl-badge upcoming" aria-label="Status: Upcoming">Upcoming</span>
+            <h3 class="tl-event">Vote Counting &amp; Results</h3>
             <p class="tl-desc">ECI counts EVMs centrally; results announced; winning candidates take oath.</p>
             <p class="tl-when">2–3 days after voting</p>
           </div>
-        </div>
-        <div class="tl-item upcoming" role="listitem">
+        </li>
+        <li class="tl-item upcoming" role="listitem">
           <div class="tl-dot" aria-hidden="true"></div>
           <div class="tl-content">
-            <span class="tl-badge upcoming">Upcoming</span>
+            <span class="tl-badge upcoming" aria-label="Status: Upcoming">Upcoming</span>
             <h3 class="tl-event">Government Formation</h3>
             <p class="tl-desc">Majority party/coalition invited to form government; PM takes oath at Rashtrapati Bhavan.</p>
             <p class="tl-when">Within weeks of results</p>
           </div>
-        </div>
-      </div>
+        </li>
+      </ol>
 
       <div class="timeline-cta">
-        <button class="primary-btn" onclick="switchTab('assistant'); sendQuery('Tell me more about voting day process');">
+        <button class="primary-btn" type="button" onclick="switchTab('assistant'); sendQuery('Tell me more about voting day process');" aria-label="Ask AI about election phases">
           🤖 Ask AI about any phase
         </button>
       </div>
@@ -246,23 +294,84 @@
 
 <!-- ── FOOTER ────────────────────────────────────────────────────────── -->
 <footer class="site-footer" role="contentinfo">
-  <p>Built with Google Gemini · Maps · Translate &nbsp;|&nbsp; Data: Election Commission of India</p>
-  <p><a href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer" class="footer-link">voters.eci.gov.in ↗</a> &nbsp;·&nbsp; Voter Helpline: <strong>1950</strong></p>
+  <p>Built with Google Gemini · Maps · Translate · BigQuery · Firebase &nbsp;|&nbsp; Data: Election Commission of India</p>
+  <p>
+    <a href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label="Visit voters.eci.gov.in (opens in new tab)">voters.eci.gov.in ↗</a>
+    &nbsp;·&nbsp; Voter Helpline: <strong>1950</strong>
+  </p>
 </footer>
 
 <!-- ── TOAST ──────────────────────────────────────────────────────────── -->
 <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
-<!-- ── MAPS SDK (injected key from backend) ─────────────────────────── -->
-{% if maps_api_key %}
-<script>
-  window.MAPS_API_KEY = "{{ maps_api_key }}";
+<!-- ── FIREBASE SDK ─────────────────────────────────────────────────── -->
+{% if firebase_cfg and firebase_cfg.apiKey %}
+<script id="firebase-cfg" type="application/json">
+  {{ firebase_cfg | tojson | safe }}
 </script>
-<script async defer
-  src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&libraries=places&callback=initMap">
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const cfgElement = document.getElementById("firebase-cfg");
+  const firebaseCfg = JSON.parse(cfgElement.textContent);
+
+  try {
+    const app = initializeApp(firebaseCfg);
+    const db  = getDatabase(app);
+
+    // Track live user count (presence)
+    const presenceRef = ref(db, "presence");
+    const myRef = push(presenceRef, { ts: serverTimestamp() });
+
+    // Remove on disconnect
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js")
+      .then(({ onDisconnect }) => onDisconnect(myRef).remove());
+
+    // Listen to presence count
+    onValue(presenceRef, snap => {
+      const count = snap.size || 0;
+      const el = document.getElementById("live-count");
+      if (el) el.textContent = `${count} active user${count !== 1 ? "s" : ""}`;
+    });
+
+    // Live query feed
+    const queriesRef = ref(db, "queries");
+    onValue(queriesRef, snap => {
+      const feed = document.getElementById("live-queries");
+      if (!feed) return;
+      const items = [];
+      snap.forEach(child => items.push(child.val()));
+      feed.innerHTML = "";
+      items.slice(-3).reverse().forEach(q => {
+        const div = document.createElement("div");
+        div.className = "live-query-item";
+        div.textContent = q.category || "general query";
+        feed.appendChild(div);
+      });
+    });
+
+    // Expose logger for script.js
+    window._fbLogQuery = (category) => {
+      push(queriesRef, { category, ts: serverTimestamp() });
+    };
+  } catch(e) {
+    console.warn("Firebase init failed:", e.message);
+  }
 </script>
 {% endif %}
 
-<script src="/static/script.js"></script>
+<!-- ── GOOGLE MAPS SDK ───────────────────────────────────────────────── -->
+{% if maps_api_key %}
+<script>
+  window.MAPS_API_KEY = "{{ maps_api_key | e }}";
+</script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key={{ maps_api_key | e }}&libraries=places&callback=initMap"
+  onerror="console.warn('Maps SDK failed to load')">
+</script>
+{% endif %}
+
+<script src="/static/script.js?v=8"></script>
 </body>
 </html>
